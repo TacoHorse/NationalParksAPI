@@ -67,7 +67,7 @@ function getUserInput() { // Adds an event listener to the page to watch for use
         let states = [];
         states = $(".js-user-select").val();
         let lim = $(".js-user-select-limit option:selected").attr("value");
-        let stateCheck = states.some( state => {
+        let stateCheck = states.some(state => {
             if (state === "DF") {
                 return true
             } else return false
@@ -101,7 +101,7 @@ function getAddress(latLong) { // Uses Geocode API to find the address based on 
         .catch(e => alert(e));
 }
 
-function getParksInfo (states) {
+function getParksInfo(states) {
 
 }
 
@@ -112,25 +112,29 @@ function getParkInfo(state, limit) { // Fetches data from NPS API
     let queryString = handleQueryParams(queryParams);
     let getURL = baseURL + queryString;
     let opts = buildHeader();
-
+    $('.js-results').empty(); // Clear old results if any
     fetch(getURL, opts)
         .then(response => handleErrors(response))
         .then(responseJSON => {
-            $('.js-results').empty(); // Clear old results if any
-            for (let i = 0; i < responseJSON.data.length && i < limit; i++) { // Loop through JSON response obj
+            let outputObject = responseJSON;
+            outputObject.data.sort(function (a, b) {
+                return a.states.localeCompare(b.states);
+            });
+            console.log(outputObject);
+            for (let i = 0; i < outputObject.data.length && i < limit; i++) { // Loop through JSON response obj
 
                 (function (i) { // IIFE used to allow use of setTimeout inside loop and give google maps API time to complete requests
                     setTimeout(function () {
-                        let name = responseJSON.data[i].fullName;
-                        let latLong = encodeLatlong(responseJSON.data[i].latLong);
-                        let description = responseJSON.data[i].description;
-                        let website = responseJSON.data[i].url;
+                        let name = outputObject.data[i].fullName;
+                        let latLong = encodeLatlong(outputObject.data[i].latLong);
+                        let description = outputObject.data[i].description;
+                        let website = outputObject.data[i].url;
                         let mapURL = "";
                         if (latLong != "No available data") {
                             mapURL = getGoogleMap(name, latLong);
                         } else mapURL = getGoogleMap(name);
                         displayResults(name, latLong, description, website, mapURL);
-                    }, 500 * (i + 1));
+                    }, 100 * (i + 1));
                 })(i);
 
             }
