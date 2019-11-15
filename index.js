@@ -64,16 +64,22 @@ function buildHeader() { // Prepares header for get request
 function getUserInput() { // Adds an event listener to the page to watch for user input
     $('.js-park-form').submit(e => {
         e.preventDefault();
-        let state = $(".js-user-select option:selected").attr("value");
+        let states = [];
+        states = $(".js-user-select").val();
         let lim = $(".js-user-select-limit option:selected").attr("value");
-        if (state === "DF") {
+        let stateCheck = states.some( state => {
+            if (state === "DF") {
+                return true
+            } else return false
+        })
+        if (stateCheck === true) {
             alert("Please select a state before pressing submit");
         }
 
         if (lim === "DF") {
             alert("Please select the number of results you wish to display");
         } else {
-            getParkInfo(state, lim);
+            getParksInfo(states, lim);
         }
 
     });
@@ -95,15 +101,17 @@ function getAddress(latLong) { // Uses Geocode API to find the address based on 
         .catch(e => alert(e));
 }
 
+function getParksInfo (states) {
+
+}
 
 function getParkInfo(state, limit) { // Fetches data from NPS API
     const baseURL = "https://developer.nps.gov/api/v1/parks?";
+
     let queryParams = buildParkQueryParams(state, limit);
     let queryString = handleQueryParams(queryParams);
     let getURL = baseURL + queryString;
     let opts = buildHeader();
-
-
 
     fetch(getURL, opts)
         .then(response => handleErrors(response))
@@ -111,7 +119,7 @@ function getParkInfo(state, limit) { // Fetches data from NPS API
             $('.js-results').empty(); // Clear old results if any
             for (let i = 0; i < responseJSON.data.length && i < limit; i++) { // Loop through JSON response obj
 
-                (function (i) {  // IIFE used to allow use of setTimeout inside loop and give google maps API time to complete requests
+                (function (i) { // IIFE used to allow use of setTimeout inside loop and give google maps API time to complete requests
                     setTimeout(function () {
                         let name = responseJSON.data[i].fullName;
                         let latLong = encodeLatlong(responseJSON.data[i].latLong);
@@ -130,17 +138,17 @@ function getParkInfo(state, limit) { // Fetches data from NPS API
         .catch(e => alert(e));
 }
 
-function getGoogleMap(name, coords) {  //Generates a google maps embed api url
+function getGoogleMap(name, coords) { //Generates a google maps embed api url
     const baseURl = "https://www.google.com/maps/embed/v1/search?";
     let queryParams = buildMapQueryParams(coords, name);
     let queryString = handleQueryParams(queryParams);
     return baseURl + queryString;
 }
 
-function displayResults(name, coords, desc, url, mapurl) {  // Displays the results from the primary NPS API request
+function displayResults(name, coords, desc, url, mapurl) { // Displays the results from the primary NPS API request
     if (coords != "No available data") { //If the could be found for that park
-    getAddress(coords).then(addressOutput => { // Then get geocode address and display results
-        $('.js-results').append(`
+        getAddress(coords).then(addressOutput => { // Then get geocode address and display results
+            $('.js-results').append(`
         <div class="park-row-item-container js-park-row-item-container">
             <div class="park-row-item js-park-row-item park-info">
                 <h3>${name}</h3>
@@ -153,8 +161,8 @@ function displayResults(name, coords, desc, url, mapurl) {  // Displays the resu
             </iframe>
         </div>
         `);
-    });
-    } else {  // Else display results indicating no lat long data was found
+        });
+    } else { // Else display results indicating no lat long data was found
         $('.js-results').append(`
         <div class="park-row-item-container js-park-row-item-container">
             <div class="park-row-item js-park-row-item park-info">
