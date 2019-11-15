@@ -79,7 +79,7 @@ function getUserInput() { // Adds an event listener to the page to watch for use
         if (lim === "DF") {
             alert("Please select the number of results you wish to display");
         } else {
-            getParksInfo(states, lim);
+            getParkInfo(states, lim);
         }
 
     });
