@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
+*{
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: #BCC2C4;
+  color: #424445;
+  font-size: 16px;
+  line-height: 32px;
+}
+
+body, .container, .park-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: 100%;
+}
+
+.park-header {
+  text-align: center;
+}
+
+
+.park-row-item-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.park-form {
+    margin-bottom: 10px;
+}
+
+.park-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.google-map {
+    width: 100vw;
+    height: 40vh;
+}
+
+.park-info {
+    width: 100vw;
+    padding: 10px;
+    background-color: #424445;
+    color: rgb(238, 238, 238);
+}
+
+.flex-item-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (min-width: 1366px) {
+
+    body {
+        font-size: 18px;
+        line-height: 36px;
+    }
+    .park-row-item-container {
+        flex-direction: row;
+        justify-content: space-evenly;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        border-bottom: 1px solid #173845;
+    }
+
+    .park-info {
+        width: 50vw;
+        max-width: 50vw;
+    }
+
+    .google-map {
+        width: 50vw;
+        height: 40vw;
+    }
+
+}
